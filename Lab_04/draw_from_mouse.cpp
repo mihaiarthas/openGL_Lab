@@ -30,6 +30,8 @@ bool Conv(punct a, punct b, punct c)
 	punct u = ProdVec(a,b);
 	punct v = ProdVec(b,c);
 
+	int semn = u.x * v.y - u.y * v.x;
+	cout << semn << endl;
 	return true;
 }
 

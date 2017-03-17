@@ -4,10 +4,34 @@
 
 using namespace std;
 
+
+
 struct punct
 {
 	int x,y;
+
+	punct operator-(const punct& other)
+	{
+		punct c;
+		c.x = x - other.x;
+		c.y = y - other.y;
+		return c;
+	}
 };
+
+
+punct ProdVec(punct a, punct b)
+{
+	return b - a;
+}
+
+bool Conv(punct a, punct b, punct c)
+{
+	punct u = ProdVec(a,b);
+	punct v = ProdVec(b,c);
+
+	return true;
+}
 
 punct vector[100];
 int numar_puncte = 0;
@@ -36,7 +60,11 @@ void desen (void) // procedura desenare
 	glPointSize(26);
 	glBegin(GL_POINTS);
 		for(int i = 0; i < numar_puncte; i++)
+		{
 			glVertex2i(vector[i].x,vector[i].y);
+			punct aux =  ProdVec(vector[i - 1], vector[i]);
+			cout << aux.x << " " << aux.y << endl;
+		}
 
 	glEnd();
 
@@ -57,6 +85,7 @@ void OnMouseClick(int button, int state, int x, int y)
 	  // functia triangulare
   }
 }
+
 
 void main (int argc, char** argv)
 {

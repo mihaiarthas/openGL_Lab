@@ -50,7 +50,7 @@ void desen (void) // procedura desenare
 
 
 	glColor3f(1.0,0.0,0.0);
-	glBegin(GL_POLYGON);
+	glBegin(GL_LINE_LOOP);
 		for(int i = 0; i < numar_puncte; i++)
 			glVertex2i(vector[i].x,vector[i].y);
 

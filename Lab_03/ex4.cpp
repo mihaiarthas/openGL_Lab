@@ -26,18 +26,20 @@ double Distanta(punct a, punct b)
 	return sqrt(x * x + y * y);
 }
 
-double Arie(int a, int b, int c)
+double Arie(punct a, punct b, punct c)
 {
-	double p = (a + b + c) / 2;
-	return sqrt(p * (p - a) * (p - b) * (p - c));
+	int delta = a.x * b.y + b.x * c.y + c.x * a.y - ( c.x * b.y + c.y * a.x + a.y * b.x );
+	if (delta < 0) delta *= -1;
+
+	return 0.5 * delta;
 }
 
-bool Interior(int AB, int BC, int AC, int AM, int BM, int CM)
+bool Interior(punct a, punct b, punct c, punct m)
 {
-	double ABC = Arie(AB, BC, AC);
-	double AMB = Arie(AB, AM, BM);
-	double AMC = Arie(AM, AC, CM);
-	double BMC = Arie(BC, BM, CM);
+	double ABC = Arie(a, b, c);
+	double AMB = Arie(a, m, b);
+	double AMC = Arie(a, m, c);
+	double BMC = Arie(b, m, c);
 
 	double asd = AMB + AMC + BMC;
 
@@ -97,27 +99,13 @@ void OnMouseClick(int button, int state, int x, int y)
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && numar_puncte == 4)
 	{
 		press = false;
-		double AB = Distanta(vector[0], vector[1]);
-		double BC = Distanta(vector[1], vector[2]);
-		double AC = Distanta(vector[0], vector[2]);
-		double AM = Distanta(vector[0], vector[3]);
-		double BM = Distanta(vector[1], vector[3]);
-		double CM = Distanta(vector[2], vector[3]);
 
-
-		cout << AB << " " << BC << " " << AC << endl;
-		cout << AM << " " << BM << " " << CM << endl;
-
-		if (Interior(AB, BC, AC, AM, BM, CM) == true) 
+		if (Interior(vector[0], vector[1], vector[2], vector[3]) == true)
 		{
 			cout << "In interior" << endl;
 		}
 		else cout << "In exterior" << endl;
 
-		
-
-
-		
 	}
 }
 

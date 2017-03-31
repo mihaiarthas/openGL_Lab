@@ -47,15 +47,16 @@ void rotireTriunghi (void)
 
 	// APLICAREA TRANSFORMARII ASUPRA TRIUNGHIULUI 
 	i++;
-
+	scale += 0.01;
 	glPushMatrix ( );
 		glTranslated(300,200,0);
 		glRotated(i, 0, 0, 1);
+		glScaled(scale,scale,0);
+
 		glTranslated(-300,-200,0);
 
 		glPushMatrix();
 
-		glScaled(2,2,0);
 		
 		glBegin (GL_TRIANGLES);
 		glColor3f (0,0,1);
@@ -88,105 +89,3 @@ void main (int argc, char** argv)
 	glutMainLoop ( ); // ultima instructiune a programului, asteapta (eventuale) noi date de intrare
    
 }
-
-//
-//#include<windows.h>
-//#include <gl/freeglut.h>
-// 
-//
-//double i = 0.0;
-//double j = 0.0;
-//double alpha = 1.0; 
-//void init(void) 
-//{
-//   glClearColor (1.0, 1.0, 1.0, 0.0);
-//   glMatrixMode (GL_PROJECTION);
-//   glOrtho(-20.0, 780.0, 0.0, 600.0, -1.0, 1.0);
-//   
-//}
-//void deseneazaScena(void)
-//{
-//   glClear(GL_COLOR_BUFFER_BIT); 
-//   // axa de rostogolire in afara transformarii
-//   glColor3f(0,0,0);
-//   glBegin(GL_LINES);
-//   glVertex2i(-30,100);
-//   glVertex2i(780,100);
-//   glEnd();
-//   // patratul
-//   glPushMatrix ( );
-//   glTranslated (i, 100.0, 0.0);
-//   glPushMatrix ( );
-//   glRotated (j, 0.0, 0.0, 1.0);
-//   glColor3f (1.0, 0.0, 0.0);
-//   glRecti (-10, -10, 10, 10);
-//   glPopMatrix ( );
-//   glPopMatrix ( );
-//    
-//   glutSwapBuffers();
-//   glFlush ( );
-//}
-// 
-//void reshape(int w, int h)
-//{
-//   glViewport (0, 0, (GLsizei) w, (GLsizei) h);
-//   glMatrixMode(GL_PROJECTION);
-//   glLoadIdentity();
-//   glOrtho(-20.0, 780.0, 0.0, 600.0, -1.0, 1.0);
-//   glMatrixMode(GL_MODELVIEW);
-//   glLoadIdentity();
-//}
-//
-//void miscad (void)
-//{
-//	i = i + alpha;
-//  if ( i > 750.0 )
-//	  alpha = -1.0;
-//  else if ( i < 0.0 )
-//		alpha = 1.0;
-//  j = j + 15.0;
-//
-//  glutPostRedisplay ( );
-//}
-//
-//void miscas (void)
-//{   
-//	i = i + alpha;
-//  if ( i < 0.0 )
-//	  alpha = 1.0;
-//  else if ( i > 750.0 )
-//		alpha = -1.0;
-//  j = j + 15.0;
-//
-//  glutPostRedisplay ( );
-//}
-//void mouse(int button, int state, int x, int y) 
-//{
-//   switch (button) {
-//      case GLUT_LEFT_BUTTON:
-//         if (state == GLUT_DOWN)
-//            alpha = -1.0; glutIdleFunc(miscas);
-//         break;
-//      case GLUT_RIGHT_BUTTON:
-//         if (state == GLUT_DOWN)
-//            alpha = 1.0; glutIdleFunc(miscad);
-//         break;
-//      default:
-//         break;
-//   }
-//}
-//
-//
-//void main(int argc, char** argv)
-//{
-//   glutInit(&argc, argv);
-//   glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGB);
-//   glutInitWindowSize (800, 600); 
-//   glutInitWindowPosition (100, 100);
-//   glutCreateWindow ("Patrat care se rostogoleste");
-//   init ();
-//   glutDisplayFunc(deseneazaScena); 
-//   glutReshapeFunc(reshape); 
-//   glutMouseFunc(mouse);
-//   glutMainLoop();
-//}

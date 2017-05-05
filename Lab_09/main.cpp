@@ -11,11 +11,16 @@ float angle = 0.0;
 // actual vector representing the camera's direction
 float lx = 0.0f, lz = -1.0f;
 // XZ position of the camera
-float x = 0.0f, z = 5.0f;
+float x = 0.0f, y = 1.0f, z = 50.0f;
+
+float velocity = 0.1f;
+
+float maxHeight = 3.0f;
 
 float fractionSpeed = 0.02f;
 float fraction = fractionSpeed;
 
+bool canJump = false;
 
 enum {
 	NOAPTE, ZI
@@ -98,7 +103,7 @@ void drawTree()
 void keyboard()
 {
 	fraction = fractionSpeed;
-	cout << "SPEED : " << fraction << endl;
+	//cout << "SPEED : " << fraction << endl;
 
 	if (GetAsyncKeyState(65)) // A
 	{
@@ -123,15 +128,17 @@ void keyboard()
 		z -= lz * fraction;
 	}
 
-	//if (GetAsyncKeyState(75)) // K
-	//{
-	//	fractionSpeed += 0.01f;
-	//}
+	
+	if (GetAsyncKeyState(VK_SPACE))
+	{
+		if (y <= maxHeight)
+			y += velocity;
+	}
+	else
+	{
+		y -= velocity;
+	}
 
-	//if (GetAsyncKeyState(77)) // M
-	//{
-	//	fractionSpeed -= 0.01f;
-	//}
 
 	if (GetAsyncKeyState(27)) // ESC
 	{
@@ -150,9 +157,15 @@ void renderScene(void) {
 
 	keyboard();
 
+
+	if (y < 1.0f)
+	{
+		y = 1.0f;
+	}
+
 	// Set the camera
-	gluLookAt(x, 1.0f, z,
-		x + lx, 1.0f, z + lz,
+	gluLookAt(x, y, z,
+		x + lx, y, z + lz,
 		0.0f, 1.0f, 0.0f);
 
 
@@ -167,6 +180,7 @@ void renderScene(void) {
 		break;
 	};
 
+	cout << canJump << endl;
 	// Draw ground
 	glColor3f(0.9f, 0.9f, 0.9f);
 	glBegin(GL_QUADS);
@@ -200,12 +214,12 @@ void renderScene(void) {
 
 
 
-void processNormalKeys(unsigned char key, int x, int y)
+void processNormalKeys(unsigned char key, int x, int yy)
 {
 
 	switch (key) {
 	case 'k':
-		if(fraction <= 0.6f)
+		if (fraction <= 0.6f)
 			fractionSpeed += 0.02f;
 		break;
 	case 'm':
@@ -213,6 +227,11 @@ void processNormalKeys(unsigned char key, int x, int y)
 			fractionSpeed -= 0.02f;
 		break;
 	}
+
+	//case ' ':
+	//	canJump = true;
+	//	break;
+	//}
 }
 //
 //void processSpecialKeys(int key, int xx, int yy) {
@@ -271,4 +290,5 @@ int main(int argc, char **argv) {
 	glutMainLoop();
 
 }
+
 

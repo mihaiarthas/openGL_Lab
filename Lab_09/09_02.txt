@@ -1,0 +1,326 @@
+//SURSA:  lighthouse3D:  http://www.lighthouse3d.com/tutorials/glut-tutorial/keyboard-example-moving-around-the-world/ 
+#include <windows.h>
+#include<gl/freeglut.h>
+#include<math.h>
+#include <iostream>
+
+using namespace std;
+
+// angle of rotation for the camera direction
+float angle = 0.0;
+// actual vector representing the camera's direction
+float lx = 0.0f, lz = -1.0f;
+// XZ position of the camera
+float x = 0.0f, y = 1.0f, z = 50.0f;
+
+float velocity = 0.1f;
+
+float maxHeight = 3.0f;
+
+float fractionSpeed = 0.02f;
+float fraction = fractionSpeed;
+
+bool canJump = false;
+
+
+// Clear Color and Depth Buffers
+GLfloat black_mat[] = { 0.0, 0.0, 0.0, 1.0};
+GLfloat orange_mat[] = { 1.000, 0.498, 0.314, 1.0};
+GLfloat green_mat[] = { 0.0, 0.4, 0.0, 1.0};
+GLfloat no_mat[] = { 0.5, 0.5, 0.5, 1.0 };
+GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
+GLfloat mat_ambient_color[] = { 0.8, 0.8, 0.2, 1.0 };
+GLfloat mat_diffuse[] = { 0.7, 0.7, 0.7, 1.0 };
+GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat no_shininess[] = { 0.0 };
+GLfloat low_shininess[] = { 5.0 };
+GLfloat high_shininess[] = { 100.0 };
+GLfloat mat_emission[] = {0.3, 0.2, 0.2, 0.0};
+
+enum {
+	NOAPTE, ZI
+};
+
+int rendermode = NOAPTE;
+
+void menu(int selection)
+{
+	rendermode = selection;
+	glutPostRedisplay();
+}
+
+void init(void)
+{
+   GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+   GLfloat diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+   GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+   GLfloat position[] = { 50.0, 5000.0, 50.0, 0.0 };
+   GLfloat lmodel_ambient[] = { 0.4, 0.4, 0.4, 1.0 };
+   GLfloat local_view[] = { 0.0 };
+
+   glClearColor(0.0, 0.1, 0.1, 0.0);
+   glEnable(GL_DEPTH_TEST);
+   glShadeModel(GL_SMOOTH);
+
+   glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+   glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+   glLightfv(GL_LIGHT0, GL_POSITION, position);
+   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+   glLightModelfv(GL_LIGHT_MODEL_LOCAL_VIEWER, local_view);
+
+   glEnable(GL_LIGHTING);
+   glEnable(GL_LIGHT0);
+}
+
+void changeSize(int w, int h)
+{
+
+	// Prevent a divide by zero, when window is too short
+	// (you cant make a window of zero width).
+	if (h == 0)
+		h = 1;
+	float ratio = w * 1.0 / h;
+
+	// Use the Projection Matrix
+	glMatrixMode(GL_PROJECTION);
+
+	// Reset Matrix
+	glLoadIdentity();
+
+	// Set the viewport to be the entire window
+	glViewport(0, 0, w, h);
+
+	// Set the correct perspective.
+	gluPerspective(45.0f, ratio, 0.1f, 100.0f);
+
+	// Get Back to the Modelview
+	glMatrixMode(GL_MODELVIEW);
+}
+
+
+void drawSnowMan() {
+	
+	glPushMatrix();
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+   glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+   glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	glColor3f(1.0f, 1.0f, 1.0f);
+
+	// Draw Body
+	glTranslatef(0.0f, 0.75f, 0.0f);
+	glutSolidSphere(0.75f, 20, 20);
+
+	// Draw Head
+	glTranslatef(0.0f, 1.0f, 0.0f);
+	glutSolidSphere(0.25f, 20, 20);
+
+	// Draw Eyes
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+   glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+   glMaterialfv(GL_FRONT, GL_EMISSION, black_mat);
+	glPushMatrix();
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glTranslatef(0.05f, 0.10f, 0.18f);
+	glutSolidSphere(0.05f, 10, 10);
+	glTranslatef(-0.1f, 0.0f, 0.0f);
+	glutSolidSphere(0.05f, 10, 10);
+	glPopMatrix();
+
+	// Draw Nose
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+   glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+   glMaterialfv(GL_FRONT, GL_EMISSION, orange_mat);
+	glColor3f(1.0f, 0.5f, 0.5f);
+	glutSolidCone(0.08f, 0.5f, 10, 2);
+	glPopMatrix();
+}
+
+void drawTree()
+{
+	glPushMatrix();
+	glMaterialfv(GL_FRONT, GL_AMBIENT, green_mat);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, green_mat);
+   glMaterialfv(GL_FRONT, GL_SHININESS, no_shininess);
+   glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+	glColor3f(0.000, 0.392, 0.000);
+
+	glTranslatef(5.0f, -.5f, 0.0f);
+	glPushMatrix();
+	glRotated(-90.0, 1.0, 0.0, 0.0);
+	glutSolidCone(1.0f, 5.0f, 30, 20);
+	glPopMatrix();
+	glPopMatrix();
+
+}
+
+void keyboard()
+{
+	fraction = fractionSpeed;
+	cout << "SPEED : " << fraction << endl;
+
+	if (GetAsyncKeyState(65)) // A
+	{
+		angle -= 0.03f;
+		lx = sin(angle);
+		lz = -cos(angle);
+	}
+	if (GetAsyncKeyState(68)) // D
+	{
+		angle += 0.03f;
+		lx = sin(angle);
+		lz = -cos(angle);
+	}
+	if (GetAsyncKeyState(87)) // W
+	{
+		x += lx * fraction;
+		z += lz * fraction;
+	}
+	if (GetAsyncKeyState(83)) // S
+	{
+		x -= lx * fraction;
+		z -= lz * fraction;
+	}
+
+	
+	if (GetAsyncKeyState(VK_SPACE))
+	{
+		if (y <= maxHeight)
+			y += velocity;
+	}
+	else
+	{
+		y -= velocity;
+	}
+
+
+	if (GetAsyncKeyState(27)) // ESC
+	{
+		exit(0);
+	}
+}
+
+void renderScene(void) {
+
+	 glMaterialfv(GL_FRONT, GL_AMBIENT, no_mat);
+   glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, no_mat);
+   glMaterialfv(GL_FRONT, GL_SHININESS, no_shininess);
+   glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Reset transformations
+	glLoadIdentity();
+
+	keyboard();
+
+
+	if (y < 1.0f)
+	{
+		y = 1.0f;
+	}
+
+	// Set the camera
+	gluLookAt(x, y, z,
+		x + lx, y, z + lz,
+		0.0f, 1.0f, 0.0f);
+
+
+	switch (rendermode) {
+
+	case NOAPTE:
+		glClearColor(0.000, 0.000, 0.000, 0.0);
+		break;
+
+	case ZI:
+		glClearColor(0.529, 0.808, 0.980, 0.0);
+		break;
+	};
+
+	// Draw ground
+	glNormal3f(0.0, 1.0, 0.0);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glBegin(GL_QUADS);
+	glVertex3f(-100.0f, 0.0f, -100.0f);
+	glVertex3f(-100.0f, 0.0f, 100.0f);
+	glVertex3f(100.0f, 0.0f, 100.0f);
+	glVertex3f(100.0f, 0.0f, -100.0f);
+	glEnd();
+
+	// Draw 36 SnowMen
+	for (int i = -3; i < 3; i++)
+		for (int j = -3; j < 3; j++) {
+			glPushMatrix();
+			glTranslatef(i*10.0, 0, j * 10.0);
+			drawSnowMan();
+			glPopMatrix();
+		}
+
+
+	for (int i = -3; i < 3; i++)
+		for (int j = -3; j < 3; j++) {
+			glPushMatrix();
+			glTranslatef(i*10.0, 0, j * 10.0);
+			drawTree();
+			glPopMatrix();
+		}
+
+	glutSwapBuffers();
+}
+
+
+
+
+void processNormalKeys(unsigned char key, int x, int yy)
+{
+
+	switch (key) {
+	case 'k':
+		if (fraction <= 0.6f)
+			fractionSpeed += 0.02f;
+		break;
+	case 'm':
+		if (fraction >= -0.2f)
+			fractionSpeed -= 0.02f;
+		break;
+	}
+}
+
+int main(int argc, char **argv) {
+
+	// init GLUT and create window
+
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+	glutInitWindowPosition(400, 200);
+	glutInitWindowSize(800, 600);
+	glutCreateWindow("Lighthouse3D - GLUT Tutorial");
+
+	// register callbacks
+	glutDisplayFunc(renderScene);
+	glutReshapeFunc(changeSize);
+	glutIdleFunc(renderScene);
+	glutKeyboardFunc(processNormalKeys);
+	//glutSpecialFunc(processSpecialKeys);
+
+	// OpenGL init
+	init();
+	glEnable(GL_DEPTH_TEST);
+
+	glutCreateMenu(menu);
+	glutAddMenuEntry("Noapte", NOAPTE);
+	glutAddMenuEntry("Zi", ZI);
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
+
+	// enter GLUT event processing cycle
+	glutMainLoop();
+
+}
+
+
